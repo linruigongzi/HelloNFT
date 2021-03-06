@@ -11,3 +11,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.MuiDialog-paperWidthSm {
+  max-width: 1280px !important;
+}
