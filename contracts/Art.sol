@@ -232,6 +232,9 @@ contract Capital {
 
     // Artwork 
     struct Artwork {
+        // owner
+        address owner;
+
         // nftcontract address
         address nftcontract;
         
@@ -262,6 +265,7 @@ contract Capital {
         // IERC721(nftcontract).transferFrom(msg.sender, address(this), tokenId)
 
         _allworks.push(Artwork({
+            owner: msg.sender,
             started: block.number,
             nftcontract: nftcontract,
             tokenId: tokenId,
@@ -300,6 +304,22 @@ contract Capital {
 
         emit Vote(msg.sender, nftcontract, tokenId, work.power, work.votes);
     }
+
+    // use this function to bid nft
+    function bid(address nftcontract, uint256 tokenId, uint256 amount) external {
+
+    }
+
+    // push a nft into Auction state
+    function auction(address nftcontract, uint256 tokenId) external {
+
+    }
+
+    // use this claim reward
+    function claim(address nftcontract, uint256 tokenId) external {
+
+    }
+
 
     function bid() external {
         // TODO::
