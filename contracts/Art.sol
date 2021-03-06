@@ -199,17 +199,32 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract Capital {
+contract Art{
     /**
-     * @dev Emitted when `tokenId` token of `contract` contract transferred from `from`.
+     * @dev Emitted when 
     */
     event Registe(address indexed owner, address indexed nftcontract, uint256 indexed tokenId);
     
     /**
-     * @dev Emitted when `tokenId` token of `contract` contract transferred from `from`.
+     * @dev Emitted when
     */ 
     event Vote(address indexed voter, address indexed nftcontract, uint256 indexed tokenId, uint256 power,  uint256 votes);
     
+    /**
+     * @dev Emitted when 
+    */  
+    event Auction(address indexed owner, uint256 indexed tokenId);
+
+    /**
+     * @dev Emitted when 
+    */  
+    event Bid(address indexed bider, uint256 indexed price, uint256 indexed time);
+
+    /**
+     * @dev Emitted when 
+    */  
+    event Claim(address indexed owner, address indexed nftcontract, uint256 indexed tokenId);
+
     // @notice Possible states that a artwork may be in
     enum ArtState {
         Active,
@@ -218,17 +233,27 @@ contract Capital {
         Closed
     }
 
+    uint256 public constant DURATION = 3 minutes;
+
     // Platform token
     address public _token;
 
     // use for list artworks
     Artwork[] public _allworks;
+
+    // bids history of allworks[i]
+    mapping (uint256 => Record[]) public _bids;
     
     // use for registe artwork
     mapping (address => mapping(uint256 => uint256)) public _registedWorks;
     
     // record user vote time
     mapping (address => uint256) public _voteTime;
+
+    struct Record {
+        address offer;
+        uint256 price;
+    }
 
     // Artwork 
     struct Artwork {
@@ -243,7 +268,7 @@ contract Capital {
         
         ArtState status;
         
-        // time artwork startd register 
+        // time artwork start register or start auction
         uint256 started;
         
         // last vote time
@@ -255,10 +280,13 @@ contract Capital {
 
         // the total number of votes the artwork had
         uint256 votes;
+
+        // the minimum price owner can accept units in ETH
+        uint256 price;
     }
     
     // register artwork to platform
-    function register(address nftcontract, uint256 tokenId) external {
+    function register(address nftcontract, uint256 tokenId, uint256 price) external {
         require(_registedWorks[nftcontract][tokenId] == 0, "Artwork already registed");
 
         // TODO:: In demo mode not transfer ownership
@@ -273,7 +301,8 @@ contract Capital {
             // initial register treat as one vote but not in record
             update: block.timestamp,
             power: 1,
-            votes: 1 
+            votes: 1,
+            price: price
         }));
 
         _registedWorks[nftcontract][tokenId] = _allworks.length;
@@ -289,6 +318,7 @@ contract Capital {
         
         uint256 extra = block.timestamp - _voteTime[msg.sender] > 1 days ? 1 : 0; 
         
+        // this require approve before, if transfer only one per day, not necessary
         if (votes - extra > 0) {
             IERC20(_token).transferFrom(msg.sender, address(this), votes - extra);
         }
@@ -298,7 +328,7 @@ contract Capital {
 
         work.power = (work.update - work.started)/(block.timestamp - work.started) * work.power + votes;
         work.update = block.timestamp;
-        work.votes = work.votes  + 1;
+        work.votes = work.votes + 1;
         
         _voteTime[msg.sender] = block.timestamp;
 
@@ -306,23 +336,73 @@ contract Capital {
     }
 
     // use this function to bid nft
-    function bid(address nftcontract, uint256 tokenId, uint256 amount) external {
+    function bid(address nftcontract, uint256 tokenId) external payable {
+        uint256 index = _registedWorks[nftcontract][tokenId];
+        require(index > 0, "Bid artwork not exist");
 
+        Artwork storage work = _allworks[index - 1];
+        require(work.status == ArtState.Auction, "Artwork status is not auction");
+
+        // last bid time exceed longest wait time.
+        if (block.timestamp - work.update > DURATION) {
+            work.status = ArtState.Sold;
+            return;
+        }
+
+        uint256 price = msg.value;
+        require(price >= work.price, "Bid price lower than minimun price owner can accept");
+
+        if (_bids[index].length > 0) {        
+            require(price > _bids[index][_bids[index].length - 1].price, "Bid price lower than last offer price");
+        }
+
+        _bids[index].push(Record({
+            offer: msg.sender,
+            price: price
+        }));
+        
+        work.update = block.timestamp;
+
+        emit Bid(msg.sender, price, block.timestamp);
     }
 
     // push a nft into Auction state
-    function auction(address nftcontract, uint256 tokenId) external {
+    function auction(address nftcontract, uint256 tokenId) external {        
+        uint256 index = _registedWorks[nftcontract][tokenId];
+        require(index > 0, "Auction artwork not exist");
 
+        Artwork storage work = _allworks[index - 1];
+        require(work.status == ArtState.Active, "Artwork status is not active");
+
+        // TODO::In demo do not require owner only
+        // require(msg.sender == work.owner, "Only owner can auction artwork");
+
+        work.status = ArtState.Auction;
+        work.started = block.timestamp;
+        work.update = block.timestamp;
+
+        emit Auction(nftcontract, tokenId);
     }
 
     // use this claim reward
     function claim(address nftcontract, uint256 tokenId) external {
+        uint256 index = _registedWorks[nftcontract][tokenId];
+        require(index > 0, "Claim artwork not exist"); 
 
-    }
+        Artwork storage work = _allworks[index - 1];
+        // last bid time exceed longest wait time.
+        if (work.status == ArtState.Auction && block.timestamp - work.update > DURATION) {
+            work.status = ArtState.Sold;
+        }
 
+        require(work.status == ArtState.Sold, "Only sold artwork can claim");
 
-    function bid() external {
-        // TODO::
+        //TODO:: in demo do not distinguish from sender 
+        payable(msg.sender).transfer(work.price);
+
+        work.status = ArtState.Closed;
+
+        emit Claim(work.owner, nftcontract, tokenId);
     }
     
     // 索回艺术品   
