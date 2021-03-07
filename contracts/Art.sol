@@ -316,7 +316,7 @@ contract Art{
         uint256 index = _registedWorks[nftcontract][tokenId];
         require(index > 0, "Voted artwork not exist");
         
-        uint256 extra = block.timestamp - _voteTime[msg.sender] > 1 days ? 1 : 0; 
+        // uint256 extra = block.timestamp - _voteTime[msg.sender] > 1 days ? 1 : 0; 
         
         // this require approve before, if transfer only one per day, not necessary
         // if (votes - extra > 0) {
