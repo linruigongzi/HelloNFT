@@ -285,7 +285,7 @@ contract Art{
         uint256 price;
     }
     
-    // register artwork to platform
+    // registe artwork to platform
     function registe(address nftcontract, uint256 tokenId, uint256 price) external {
         require(_registedWorks[nftcontract][tokenId] == 0, "Artwork already registed");
 
