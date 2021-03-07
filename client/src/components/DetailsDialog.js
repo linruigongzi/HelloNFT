@@ -15,8 +15,6 @@ import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import { withStyles } from '@material-ui/core/styles';
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
-
 const styles = {
   dialog: {
     maxWidth: 1280
@@ -28,24 +26,44 @@ const styles = {
   },
   imageDiv: {
     width: 720,
-    height: 720
+    height: 720,
+    background: "lightgrey",
   },
   img: {
     width: 720,
     height: 720,
     objectFit: "contain"
   },
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
+  des: {
+    margin: 16
   },
+  people: {
+    display: "flex",
+    "& > div": {
+      flexGrow: 1,
+      span: 4
+    }
+  },
+  person: {
+    display: "flex",
+    flexWrap: "nowrap",
+    alignItems: "center"
+  },
+  avatar: {
+    display: "inline-block",
+    marginRight: "8px",
+  },
+  name: {
+    fontSize: "1rem",
+    fontWeight: "bold"
+  }
 };
 
 const imgUrl = "https://lh3.googleusercontent.com/z378T1CMLctJwPNJmyWx-g2pOVzxW_IpFAVzv5Z0hVQH2d2xhbGFURHkFCIHTXslevuhCUXjjuM-FgJa_D1GK4T7vjKtU8uZqgCFIg=s0";
 
 
 function DetailsDialog(props) {
-  const { classes } = props;
+  const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art } = props;
   const { onClose, selectedValue, open } = props;
 
   const handleClose = () => {
@@ -56,6 +74,14 @@ function DetailsDialog(props) {
     onClose(value);
   };
 
+  const handleSale = () => {
+    props.onSale(props.art.nftcontract, props.art.tokenId)
+  }
+
+  const handleBuy = () => {
+    props.onBuy(props.art.nftcontract, props.art.tokenId)
+  }
+
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
       <div className={classes.dialogDiv}>
@@ -63,11 +89,39 @@ function DetailsDialog(props) {
           <img src={imgUrl} className={classes.img}></img>
         </div>
         <div className={classes.des}>
-          price: 120
-          <Button color="primary" className={classes.button}>
+          Artwork Name
+
+          {/* <div className={classes.people}>
+            <div className={classes.creator}>
+              <Typography variant="h6" color="inherit" className={classes.des}>
+                Created by
+              </Typography>
+              <div className={classes.person}>
+                <Avatar alt="Remy Sharp" src={require("../" + creatorAvatar)} className={classes.avatar} />
+                <span className={classes.name}>{ creatorName }</span>
+              </div>
+            </div>
+
+            <div className={classes.owner}>
+              <Typography variant="h6" color="inherit" className={classes.des}>
+                Owned by
+              </Typography>
+              <div className={classes.person}>
+                <Avatar alt="Remy Sharp" src={require( "../" + ownerAvatar )} className={classes.avatar} />
+                <span className={classes.name}>{ownerName}</span>
+              </div>
+            </div>
+            
+          </div> */}
+
+          <Typography component="p" size="small" className={classes.des}>
+            { des }
+          </Typography>
+
+          <Button color="primary" className={classes.button} onClick={handleSale}>
             Buy
           </Button>
-          <Button color="primary" className={classes.button}>
+          <Button color="primary" className={classes.button} onClick={handleBuy}>
             Go on Sale
           </Button>
         </div>

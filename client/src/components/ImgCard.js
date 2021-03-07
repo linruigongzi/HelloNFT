@@ -53,24 +53,28 @@ const styles = {
   }
 };
 
-const imgUrl = "https://lh3.googleusercontent.com/z378T1CMLctJwPNJmyWx-g2pOVzxW_IpFAVzv5Z0hVQH2d2xhbGFURHkFCIHTXslevuhCUXjjuM-FgJa_D1GK4T7vjKtU8uZqgCFIg=s0";
+const imgUrl = "https://internationalbanker.com/wp-content/uploads/2020/04/Digital-Tokens.png";
 
 function ImgMediaCard(props) {
-  const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art } = props;
+  const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art, nftImage } = props;
 
   const vote = () => {
     props.onVote(props.art.nftcontract, props.art.tokenId)
   }
 
+  const select = () => {
+    props.onDetail(props)
+  }
+
   return (
     <Card className={classes.card}>
-      <CardActionArea onClick={props.onDetail}>
+      <CardActionArea onClick={select}>
         <CardMedia
           component="img"
           alt="Contemplative Reptile"
           className={classes.media}
           height="140"
-          image={imgUrl}
+          image={require("../" + nftImage)}
           title="Contemplative Reptile"
         />
         <CardContent>
@@ -94,8 +98,6 @@ function ImgMediaCard(props) {
                 <span className={classes.name}>{ownerName}</span>
               </div>
             </div>
-            
-            
             
           </div>
           <Typography component="p" size="small" className={classes.des}>

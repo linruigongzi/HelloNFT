@@ -55,17 +55,20 @@ class App extends Component {
     topArts: [],
     restArts: [],
     open: false,
+    selectedArt: {},
   };
 
-  handleClickOpen = () => {
+  handleClickOpen = (art) => {
     this.setState({
-      open: true
+      open: true,
+      selectedArt: art
     });
   }
 
   handleClose = () => {
     this.setState({
-      open: false
+      open: false,
+      selectedArt: {}
     })
   }
 
@@ -97,8 +100,6 @@ class App extends Component {
         Art.abi,
         deployedNetwork && deployedNetwork.address,
       );
-
-      
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -163,6 +164,24 @@ class App extends Component {
     this.getAllArts();
   }
 
+  setSelectedArt = (art) => {
+    this.setState({
+      selectedArt: art
+    })
+  }
+
+  onSale = async (address, id) => {
+    const { accounts, artContract } = this.state;
+
+    await artContract.methods.auction(address, id).send({ from: accounts[0] });
+  }
+
+  onBuy = async (address, id) => {
+    const { accounts, artContract } = this.state;
+
+    await artContract.methods.bid(address, id).send({ from: accounts[0] });
+  }
+
   render() {
     const { classes } = this.props;
     const { accounts, artContract } = this.state;
@@ -196,6 +215,7 @@ class App extends Component {
                 className={classes.itemTop}
                 onDetail={this.handleClickOpen}
                 onVote={this.vote}
+                onSelect={this.setSelectedArt}
                 {...a}
               />
             ))}
@@ -211,13 +231,20 @@ class App extends Component {
                 className={classes.itemBottom}
                 onDetail={this.handleClickOpen}
                 onVote={this.vote}
+                onSelect={this.setSelectedArt}
                 {...a}
               />
             ))}
           </div>
         </div>
 
-        <DetailsDialog open={this.state.open} onClose={this.handleClose}/>
+        <DetailsDialog 
+          open={this.state.open} 
+          onClose={this.handleClose} 
+          onSale={this.onSale}
+          onBuy={this.onBuy}
+          {...this.state.selectedArt}
+        />
         
       </div>
     );

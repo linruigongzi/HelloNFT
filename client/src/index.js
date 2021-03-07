@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 const arts = [
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/adam.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -15,7 +15,7 @@ const arts = [
     art: {},
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/encounter.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -24,7 +24,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/forest.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -33,7 +33,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/gang-in-a-twisted-inferno-of-apocalyptic-pinkness.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -42,7 +42,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/geometrical-heart-fire-dispersion-warm-version.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -51,7 +51,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/madonna-ethereum-genesis-1-1.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -60,7 +60,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/memory-palace.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -69,7 +69,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/once-twice.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -78,7 +78,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/plant-search.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -87,7 +87,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/the-lions-mask.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
@@ -96,7 +96,7 @@ const arts = [
     art: {}
   },
   {
-    nftImage: "images/nft1.jpg",
+    nftImage: "images/Bull.jpg",
     des: "blah blah blah",
     creatorName: "Jobs",
     creatorAvatar: "images/avtar1.jpg",
