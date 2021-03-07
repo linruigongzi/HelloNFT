@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
 /**
  * @dev Required interface of an ERC721 compliant contract.
@@ -286,7 +286,7 @@ contract Art{
     }
     
     // register artwork to platform
-    function register(address nftcontract, uint256 tokenId, uint256 price) external {
+    function registe(address nftcontract, uint256 tokenId, uint256 price) external {
         require(_registedWorks[nftcontract][tokenId] == 0, "Artwork already registed");
 
         // TODO:: In demo mode not transfer ownership
@@ -328,7 +328,7 @@ contract Art{
 
         work.power = (work.update - work.started)/(block.timestamp - work.started) * work.power + votes;
         work.update = block.timestamp;
-        work.votes = work.votes + 1;
+        work.votes = work.votes + votes;
         
         _voteTime[msg.sender] = block.timestamp;
 
@@ -341,7 +341,8 @@ contract Art{
         require(index > 0, "Bid artwork not exist");
 
         Artwork storage work = _allworks[index - 1];
-        require(work.status == ArtState.Auction, "Artwork status is not auction");
+        // TODO:: in demo do not required
+        // require(work.status == ArtState.Auction, "Artwork status is not auction");
 
         // last bid time exceed longest wait time.
         if (block.timestamp - work.update > DURATION) {
@@ -372,7 +373,8 @@ contract Art{
         require(index > 0, "Auction artwork not exist");
 
         Artwork storage work = _allworks[index - 1];
-        require(work.status == ArtState.Active, "Artwork status is not active");
+        // TODO:: in demo do not required
+        // require(work.status == ArtState.Active, "Artwork status is not active");
 
         // TODO::In demo do not require owner only
         // require(msg.sender == work.owner, "Only owner can auction artwork");
@@ -395,7 +397,8 @@ contract Art{
             work.status = ArtState.Sold;
         }
 
-        require(work.status == ArtState.Sold, "Only sold artwork can claim");
+        // TODO:: in demo do not required
+        // require(work.status == ArtState.Sold, "Only sold artwork can claim");
 
         //TODO:: in demo do not distinguish from sender 
         payable(msg.sender).transfer(work.price);
