@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+// import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import Token from './contracts/Token.json';
+import Art from './contracts/Art.json';
 import getWeb3 from "./getWeb3";
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -46,7 +48,12 @@ class App extends Component {
     storageValue: 0,
     web3: null, 
     accounts: null, 
-    storage: null,
+    storageContract: null,
+    tokenContract: null,
+    artContract: null,
+    artList: [],
+    topArts: [],
+    restArts: [],
     open: false,
   };
 
@@ -73,15 +80,29 @@ class App extends Component {
 
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const storage = new web3.eth.Contract(
-        SimpleStorageContract.abi,
+      // let deployedNetwork = SimpleStorageContract.networks[networkId];
+      // const storage = new web3.eth.Contract(
+      //   SimpleStorageContract.abi,
+      //   deployedNetwork && deployedNetwork.address,
+      // );
+
+      let deployedNetwork = Token.networks[networkId];
+      const tokenContract = new web3.eth.Contract(
+        Token.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
+      deployedNetwork = Art.networks[networkId];
+      const artContract = new web3.eth.Contract(
+        Art.abi,
+        deployedNetwork && deployedNetwork.address,
+      );
+
+      
+
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, storage }, this.runExample);
+      this.setState({ web3, accounts, tokenContract, artContract }, this.getAllArts);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -91,76 +112,113 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
-    const { accounts, storage } = this.state;
+  // getAndStorage = async () => {
+  //   const { accounts, storage, art } = this.state;
 
-    // Stores a given value, 5 by default.
-    await storage.methods.set(5).send({ from: accounts[0] });
+  //   // Stores a given value, 5 by default.
+  //   await storage.methods.set(5).send({ from: accounts[0] });
 
-    // Get the value from the contract to prove it worked.
-    const response = await storage.methods.get().call();
+  //   // Get the value from the contract to prove it worked.
+  //   const response = await storage.methods.get().call();
+
+  //   this.setState({
+  //     storageValue: response
+  //   })
+  // }
+
+  getAllArts = async () => {
+    const { artContract } = this.state;
+    const { arts } = this.props;
+    const artList = [];
+
+    for (let i = 0; i < 11; i++) {
+      const art = await artContract.methods._allworks(i).call();
+      artList.push(art);
+    }
+
+    artList.sort((a,b) => b.votes - a.votes );
+
+    for (let i = 0; i < 11; i++) {
+      arts[i].art = artList[i]
+    }
+
+    console.log(artList);
+
+    const topArts = arts.slice(0, 3);
+    const restArts = arts.slice(3);
 
     // Update state with the result.
-    this.setState({ storageValue: response });
+    this.setState({
+      topArts,
+      restArts,
+      artList
+    });
   };
+
+  vote = async (address, id) => {
+    const { accounts, artContract } = this.state;
+
+    await artContract.methods.vote(address, id, 1).send({ from: accounts[0] });
+
+    this.getAllArts();
+  }
 
   render() {
     const { classes } = this.props;
+    const { accounts, artContract } = this.state;
+    const { arts } = this.props;
+    // const artList = await art.methods._allworks().call();
+
+    const topArts = arts.slice(0, 3);
+    const restArts = arts.slice(3);
 
     if (!this.state.web3) {
       return (
         <div>
           <NavBar />
-          <div className={classes.container}>
-            <Typography variant="h6" color="inherit">
-              Hottest
-              <span role="img" aria-label="fire">🔥</span>
-            </Typography>
-
-            <div className={classes.containerTop}>
-              <ImgCard className={classes.itemTop} onClick={this.handleClickOpen}/>
-              <ImgCard className={classes.itemTop}/>
-              <ImgCard className={classes.itemTop}/>
-            </div>
-
-            <Typography variant="h6" color="inherit">
-              Chasing up
-            </Typography>
-
-            <div className={classes.containerBottom}>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-              <ImgCard className={classes.itemBottom}/>
-            </div>
-          </div>
-
-          <DetailsDialog open={this.state.open} onClose={this.handleClose}/>
-          
+          loading...
         </div>
       )
-      // return <div>Loading Web3, accounts, and contract...</div>;
     }
 
     return (
-      <div className="App">
+      <div>
         <NavBar />
-        Hottest
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        <div className={classes.container}>
+          <Typography variant="h6" color="inherit">
+            Hottest
+            <span role="img" aria-label="fire">🔥</span>
+          </Typography>
+
+          <div className={classes.containerTop}>
+            {topArts.map((a) => (
+              <ImgCard 
+                className={classes.itemTop}
+                onDetail={this.handleClickOpen}
+                onVote={this.vote}
+                {...a}
+              />
+            ))}
+          </div>
+
+          <Typography variant="h6" color="inherit">
+            Chasing up
+          </Typography>
+
+          <div className={classes.containerBottom}>
+            {restArts.map((a) => (
+              <ImgCard
+                className={classes.itemBottom}
+                onDetail={this.handleClickOpen}
+                onVote={this.vote}
+                {...a}
+              />
+            ))}
+          </div>
+        </div>
+
+        <DetailsDialog open={this.state.open} onClose={this.handleClose}/>
+        
       </div>
     );
   }

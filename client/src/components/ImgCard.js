@@ -53,32 +53,18 @@ const styles = {
   }
 };
 
-const json = [
-  {
-    nftImage: "images/nft1.jpg",
-    des: "blah blah blah",
-    creatorName: "Jobs",
-    creatorAvatar: "images/jobs.jpg",
-    ownerName: "Jimmy",
-    ownerAvatar: "images/jimmy.jpg",
-  },
-  {
-    nftImage: "images/nft1.jpg",
-    des: "blah blah blah",
-    creatorName: "Jobs",
-    creatorAvatar: "images/jobs.jpg",
-    ownerName: "Jimmy",
-    ownerAvatar: "images/jimmy.jpg",
-  },
-]
-
 const imgUrl = "https://lh3.googleusercontent.com/z378T1CMLctJwPNJmyWx-g2pOVzxW_IpFAVzv5Z0hVQH2d2xhbGFURHkFCIHTXslevuhCUXjjuM-FgJa_D1GK4T7vjKtU8uZqgCFIg=s0";
 
 function ImgMediaCard(props) {
-  const { classes } = props;
+  const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art } = props;
+
+  const vote = () => {
+    props.onVote(props.art.nftcontract, props.art.tokenId)
+  }
+
   return (
-    <Card className={classes.card} onClick={props.onClick}>
-      <CardActionArea>
+    <Card className={classes.card}>
+      <CardActionArea onClick={props.onDetail}>
         <CardMedia
           component="img"
           alt="Contemplative Reptile"
@@ -94,8 +80,8 @@ function ImgMediaCard(props) {
                 Created by
               </Typography>
               <div className={classes.person}>
-                <Avatar alt="Remy Sharp" src={require("images/avtar1.jpg")} className={classes.avatar} />
-                <span className={classes.name}>Cody Fisher</span>
+                <Avatar alt="Remy Sharp" src={require("../" + creatorAvatar)} className={classes.avatar} />
+                <span className={classes.name}>{ creatorName }</span>
               </div>
             </div>
 
@@ -104,8 +90,8 @@ function ImgMediaCard(props) {
                 Owned by
               </Typography>
               <div className={classes.person}>
-                <Avatar alt="Remy Sharp" src={require("images/avtar1.jpg")} className={classes.avatar} />
-                <span className={classes.name}>Robert Fox</span>
+                <Avatar alt="Remy Sharp" src={require( "../" + ownerAvatar )} className={classes.avatar} />
+                <span className={classes.name}>{ownerName}</span>
               </div>
             </div>
             
@@ -113,16 +99,15 @@ function ImgMediaCard(props) {
             
           </div>
           <Typography component="p" size="small" className={classes.des}>
-            Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-            across all continents except Antarctica
+            { des }
           </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
         <div className={classes.grow}></div>
         <Button variant="outlined" size="small" color="primary">
-          256
-          <FavoriteIcon className={classes.favorite}/>
+          {art.votes}
+          <FavoriteIcon className={classes.favorite} onClick={vote}/>
         </Button>
       </CardActions>
     </Card>
