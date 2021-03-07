@@ -316,12 +316,12 @@ contract Art{
         uint256 index = _registedWorks[nftcontract][tokenId];
         require(index > 0, "Voted artwork not exist");
         
-        uint256 extra = block.timestamp - _voteTime[msg.sender] > 1 days ? 1 : 0; 
+        // uint256 extra = block.timestamp - _voteTime[msg.sender] > 1 days ? 1 : 0; 
         
         // this require approve before, if transfer only one per day, not necessary
-        if (votes - extra > 0) {
-            IERC20(_token).transferFrom(msg.sender, address(this), votes - extra);
-        }
+        // if (votes - extra > 0) {
+        //     IERC20(_token).transferFrom(msg.sender, address(this), votes - extra);
+        // }
 
         Artwork storage work = _allworks[index - 1];
         require(work.status == ArtState.Active, "Artwork status is not active");
