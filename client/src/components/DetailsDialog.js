@@ -59,11 +59,12 @@ const styles = {
   }
 };
 
-const imgUrl = "https://lh3.googleusercontent.com/z378T1CMLctJwPNJmyWx-g2pOVzxW_IpFAVzv5Z0hVQH2d2xhbGFURHkFCIHTXslevuhCUXjjuM-FgJa_D1GK4T7vjKtU8uZqgCFIg=s0";
-
+let imgUrl = "https://lh3.googleusercontent.com/z378T1CMLctJwPNJmyWx-g2pOVzxW_IpFAVzv5Z0hVQH2d2xhbGFURHkFCIHTXslevuhCUXjjuM-FgJa_D1GK4T7vjKtU8uZqgCFIg=s0";
+let creatorAva = imgUrl;
+let ownerAva = imgUrl;
 
 function DetailsDialog(props) {
-  const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art } = props;
+  const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art, nftImage, title} = props;
   const { onClose, selectedValue, open } = props;
 
   const handleClose = () => {
@@ -81,6 +82,12 @@ function DetailsDialog(props) {
   const handleBuy = () => {
     props.onBuy(props.art.nftcontract, props.art.tokenId)
   }
+  
+  if (open) {
+    imgUrl = require("../" + nftImage);
+    creatorAva = require("../" + creatorAvatar);
+    ownerAva = require( "../" + ownerAvatar );
+  }
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
@@ -89,15 +96,18 @@ function DetailsDialog(props) {
           <img src={imgUrl} className={classes.img}></img>
         </div>
         <div className={classes.des}>
-          Artwork Name
+          <Typography variant="h2" color="inherit" className={classes.title}>
+            {title}
+          </Typography>
+          
 
-          {/* <div className={classes.people}>
+          <div className={classes.people}>
             <div className={classes.creator}>
               <Typography variant="h6" color="inherit" className={classes.des}>
                 Created by
               </Typography>
               <div className={classes.person}>
-                <Avatar alt="Remy Sharp" src={require("../" + creatorAvatar)} className={classes.avatar} />
+                <Avatar alt="Remy Sharp" src={creatorAva} className={classes.avatar} />
                 <span className={classes.name}>{ creatorName }</span>
               </div>
             </div>
@@ -107,12 +117,12 @@ function DetailsDialog(props) {
                 Owned by
               </Typography>
               <div className={classes.person}>
-                <Avatar alt="Remy Sharp" src={require( "../" + ownerAvatar )} className={classes.avatar} />
+                <Avatar alt="Remy Sharp" src={ownerAva} className={classes.avatar} />
                 <span className={classes.name}>{ownerName}</span>
               </div>
             </div>
             
-          </div> */}
+          </div>
 
           <Typography component="p" size="small" className={classes.des}>
             { des }

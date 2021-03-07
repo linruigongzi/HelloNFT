@@ -53,8 +53,6 @@ const styles = {
   }
 };
 
-const imgUrl = "https://internationalbanker.com/wp-content/uploads/2020/04/Digital-Tokens.png";
-
 function ImgMediaCard(props) {
   const { classes, des, creatorName, creatorAvatar, ownerName, ownerAvatar, art, nftImage } = props;
 
